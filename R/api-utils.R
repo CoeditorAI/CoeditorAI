@@ -89,10 +89,12 @@ create_post_api_request <- function(
 
   if (rstudioapi::isAvailable()) {
 
-    req_body$rstudio <- list(
-      mode         = rstudioapi::versionInfo()$mode,
-      version      = as.character(rstudioapi::versionInfo()$version),
-      release_name = rstudioapi::versionInfo()$release_name)
+    req_body$ide <- list(
+      mode       = rstudioapi::versionInfo()$mode,
+      version    = as.character(rstudioapi::versionInfo()$version),
+      is_rstudio = is_rstudio(),
+      is_positron = is_positron()
+    )
   }
 
   req_body$coeditorai <- list(session_id    = session_id,
@@ -129,7 +131,7 @@ create_api_request <- function(api_url  = get_api_url(),
     httr2::req_timeout(getOption("coeditorai.timeout")) |>
     httr2::req_auth_basic(user     = user,
                           password = password) |>
-    httr2::req_user_agent(paste0("CoeditorAI-RStudio/",
+    httr2::req_user_agent(paste0("CoeditorAI/",
                                  utils::packageVersion("CoeditorAI")))
   return(request)
 }
@@ -145,6 +147,6 @@ print_debug_info <- function(request) {
 transform_snapshot <- function(x) {
 
   gsub(x = x,
-       pattern = "useragent: 'CoeditorAI-RStudio.*?'",
-       replacement = "useragent: 'CoeditorAI-RStudio/redacted'")
+       pattern = "useragent: 'CoeditorAI.*?'",
+       replacement = "useragent: 'CoeditorAI/redacted'")
 }
