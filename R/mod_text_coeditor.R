@@ -165,6 +165,8 @@ mod_text_coeditor_server <- function(id,
     shiny::observeEvent(input$custom_prompt_provided, {
 
       if (verbose) cli::cli_alert("Using custom prompt to edit text...")
+      
+      options("coeditorai.custom_prompt" = shiny::isolate(input$custom_prompt))
 
       shiny::removeModal()
 
@@ -241,24 +243,63 @@ mod_text_coeditor_server <- function(id,
 
     shiny::observeEvent(input$use_custom_prompt, {
 
+      custom_prompt <- getOption("coeditorai.custom_prompt", NULL)
+
+      if (!is.null(custom_prompt)) {
+        value <- custom_prompt
+        placeholder <- NULL
+      } else {
+        value <- ""
+        placeholder <- "Make the text more formal."
+      }
+
       shiny::showModal(
-        shiny::modalDialog(
-          easyClose = TRUE,
-          fade      = TRUE,
-
-          shiny::p("Write your own custom prompt for AI to edit the text:"),
-
-          shiny::textInput(
-            inputId = ns("custom_prompt"),
-            placeholder = "Make the text more formal.",
-            label   = NULL
-          ),
-
-          shiny::actionButton(
-            inputId = ns("custom_prompt_provided"),
-            label   = "Submit prompt",
-            icon    = shiny::icon("check"),
-            class   = "btn-info")
+        shiny::tags$div(
+          id = ns("custom_prompt_modal"),  
+          shiny::modalDialog(
+            easyClose = TRUE,
+            fade      = TRUE,
+      
+            shiny::tags$script(shiny::HTML(paste0("
+              $(document).ready(function() {
+                var modalSelector = '#", ns("custom_prompt_modal"), "';
+                $(modalSelector).on('shown.bs.modal', function() {
+                  $(modalSelector).on('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                      Shiny.setInputValue('", ns("custom_prompt_provided"), "', true, {priority: 'event'});
+                    }
+                  });
+                });
+      
+                $(modalSelector).on('hidden.bs.modal', function() {
+                  $(modalSelector).off('keyup');
+                });
+      
+                setTimeout(function() {
+                  $('#", ns("custom_prompt"), "').focus();
+                }, 100);
+              });
+            "))),
+      
+            shiny::p("Write your own custom prompt for AI to edit the text:"),
+      
+            shiny::textAreaInput(
+              inputId = ns("custom_prompt"),
+              value = value,
+              placeholder = placeholder,
+              label   = NULL,
+              width = "100%",
+              height = "100%",
+              resize = "vertical"
+            ),
+      
+            shiny::actionButton(
+              inputId = ns("custom_prompt_provided"),
+              label   = "Submit prompt",
+              icon    = shiny::icon("check"),
+              class   = "btn-info"
+            )
+          )
         )
       )
     })
