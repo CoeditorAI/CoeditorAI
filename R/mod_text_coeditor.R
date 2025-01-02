@@ -148,6 +148,8 @@ mod_text_coeditor_server <- function(id,
 
       if (verbose) cli::cli_alert("Translating text...")
 
+      options("coeditorai.target_language" = shiny::isolate(input$language))
+
       shiny::removeModal()
 
       output_text <- get_output_text(
@@ -187,27 +189,54 @@ mod_text_coeditor_server <- function(id,
       })
 
     shiny::observeEvent(input$translate, {
-
+      
       shiny::showModal(
-        shiny::modalDialog(
-          easyClose = TRUE,
-          fade      = TRUE,
-
-          shiny::p("Select target language:"),
-
-          shiny::selectInput(
-            inputId = ns("language"),
-            label   = NULL,
-            choices = available_languages |> sort(),
-            selected = "English"),
-
-          shiny::actionButton(
-            inputId = ns("language_selected"),
-            label   = "Select language",
-            icon    = shiny::icon("check"),
-            class   = "btn-info")
+        shiny::tags$div(
+          id = ns("language_modal"), 
+          shiny::modalDialog(
+            easyClose = TRUE,
+            fade      = TRUE,
+      
+            shiny::tags$script(shiny::HTML(paste0("
+              $(document).ready(function() {
+                var modalSelector = '#", ns("language_modal"), "';
+                $(modalSelector).on('shown.bs.modal', function() {
+                  $(modalSelector).on('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                      Shiny.setInputValue('", ns("language_selected"), "', true, {priority: 'event'});
+                    }
+                  });
+                });
+      
+                $(modalSelector).on('hidden.bs.modal', function() {
+                  $(modalSelector).off('keyup');
+                });
+      
+                setTimeout(function() {
+                  $('.selectize-input input').focus();
+                }, 100);
+              });
+            "))),
+      
+            shiny::p("Select target language:"),
+      
+            shiny::selectInput(
+              inputId = ns("language"),
+              label   = NULL,
+              choices = available_languages |> sort(),
+              selected = getOption("coeditorai.target_language", "English")
+            ),
+      
+            shiny::actionButton(
+              inputId = ns("language_selected"),
+              label   = "Select language",
+              icon    = shiny::icon("check"),
+              class   = "btn-info"
+            )
+          )
         )
       )
+      
     })
 
     shiny::observeEvent(input$use_custom_prompt, {
