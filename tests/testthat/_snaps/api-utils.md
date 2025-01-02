@@ -10,6 +10,7 @@
       Body: empty
       Options:
       * timeout_ms: 90000
+      * connecttimeout: 0
       * useragent: 'CoeditorAI-RStudio/redacted'
 
 # creating POST API request
@@ -24,5 +25,6 @@
       Body: json encoded data
       Options:
       * timeout_ms: 90000
+      * connecttimeout: 0
       * useragent: 'CoeditorAI-RStudio/redacted'
 

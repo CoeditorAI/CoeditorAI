@@ -22,11 +22,11 @@ mod_user_subscription_server <- function(input, output, session,
     current_user <- current_user()
     shiny::req(current_user$is_authorized)
 
-    subscription_plan <- ifelse("free-trial" %in% current_user$roles,
-                                "free-trial",
+    subscription_plan <- ifelse("freemium-user" %in% current_user$roles,
+                                "freemium-user",
                                 current_user$roles)
 
-    is_subscription_active <- current_user$is_freetrial_valid
+    is_subscription_active <- current_user$is_valid
 
     bslib::as_fill_item(
       min_height = "130px",
@@ -56,17 +56,14 @@ mod_user_subscription_server <- function(input, output, session,
 
             shiny::span(
               style = "font-size: 1em;",
-              if (current_user$is_freetrial_valid) {
+              if (current_user$is_valid) {
                 shiny::span(
                   bsicons::bs_icon("check2-circle"),
-                  "Your free-trial plan is active for another",
-                  round(current_user$freetrial_days_limit -
-                          current_user$since_created_days, 1),
-                  "days."
+                  "Your freemium plan is active."
                 )
               } else {
                 shiny::span(
-                  "Your free-trial plan has ended."
+                  "You have reached your freemium plan limit."
                 )
               }
             )

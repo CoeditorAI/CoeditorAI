@@ -20,7 +20,7 @@
   },
   "output": {
     "text_editor_1-input_text": {
-      "html": "<p>RStudio is not running.<\/p>\n",
+      "html": "<p>Supported IDE (RStudio / Positron) is not running.<\/p>\n",
       "deps": [
 
       ]
@@ -31,7 +31,7 @@
     "editors_outputs": {
       "text_editor_1": null
     },
-    "last_output_text": "RStudio is not running.",
-    "session_id": "72d5139c4584f702d387e74e9cac20e7"
+    "last_output_text": "Supported IDE (RStudio / Positron) is not running.",
+    "session_id": "90f5252b8ac02407d0919cfc4df9e1e7"
   }
 }

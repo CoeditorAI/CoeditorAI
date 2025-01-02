@@ -236,7 +236,7 @@ coedit_text <- function(original_text = get_selection(),
   if (debug) return(shiny_app)
 
   viewer <- shiny::paneViewer(minHeight = 550)
-
+  
   shiny::runGadget(app    = shiny_app,
                    viewer = viewer)
 }
