@@ -1,7 +1,7 @@
 Package: CoeditorAI
 Type: Package
 Title: Write Analytical Texts Faster that Read Better
-Version: 1.0.0.9000
+Version: 1.0.0.9001
 Description: 'CoeditorAI' is a plugin that provides 
     Artificial Intelligence (AI) / Large Language Models (LLM) support, 
     allowing you to write and edit professional content faster 

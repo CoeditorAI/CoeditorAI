@@ -234,8 +234,12 @@ coedit_text <- function(original_text = get_selection(),
                                server = server)
 
   if (debug) return(shiny_app)
-
-  viewer <- shiny::paneViewer(minHeight = 550)
+  
+  if (is_positron()) {
+    viewer <- utils::browseURL
+  } else {
+    viewer <- shiny::paneViewer(minHeight = 550)
+  }
   
   shiny::runGadget(app    = shiny_app,
                    viewer = viewer)
