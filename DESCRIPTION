@@ -21,6 +21,7 @@ LazyData: true
 Suggests: 
     httptest2,
     shinytest2,
+    spelling,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
@@ -46,3 +47,4 @@ Depends:
     R (>= 2.10)
 URL: https://coeditorai.com
 BugReports: https://github.com/CoeditorAI/CoeditorAI-RStudio/issues
+Language: en-US
