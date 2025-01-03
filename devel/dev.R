@@ -93,6 +93,7 @@ renv::clean()
 renv::snapshot()
 
 # usethis::use_spell_check()
+spelling::spell_check_package()
 spelling::update_wordlist()
 
 usethis::use_github_action()
