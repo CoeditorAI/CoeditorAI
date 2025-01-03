@@ -11,7 +11,7 @@
       Options:
       * timeout_ms: 90000
       * connecttimeout: 0
-      * useragent: 'CoeditorAI-RStudio/redacted'
+      * useragent: 'CoeditorAI/redacted'
 
 # creating POST API request
 
@@ -26,5 +26,5 @@
       Options:
       * timeout_ms: 90000
       * connecttimeout: 0
-      * useragent: 'CoeditorAI-RStudio/redacted'
+      * useragent: 'CoeditorAI/redacted'
 
