@@ -1,4 +1,4 @@
-# CoeditorAI (development version)
+# CoeditorAI 1.1.0
 
 # CoeditorAI 1.0.0
 
