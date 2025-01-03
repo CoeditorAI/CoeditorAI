@@ -148,6 +148,8 @@ mod_text_coeditor_server <- function(id,
 
       if (verbose) cli::cli_alert("Translating text...")
 
+      options("coeditorai.target_language" = shiny::isolate(input$language))
+
       shiny::removeModal()
 
       output_text <- get_output_text(
@@ -163,15 +165,17 @@ mod_text_coeditor_server <- function(id,
     shiny::observeEvent(input$custom_prompt_provided, {
 
       if (verbose) cli::cli_alert("Using custom prompt to edit text...")
+      
+      options("coeditorai.custom_prompt" = shiny::isolate(input$custom_prompt))
 
       shiny::removeModal()
 
       output_text <- get_output_text(
         custom_prompt,
-        text            = input_text,
+        text          = input_text,
         custom_prompt = shiny::isolate(input$custom_prompt),
-        temperature     = shiny::isolate(temperature()),
-        session_id  = shiny::isolate(session_id()))
+        temperature   = shiny::isolate(temperature()),
+        session_id    = shiny::isolate(session_id()))
 
       if (!is.null(output_text)) output_text(output_text)
     })
@@ -187,49 +191,110 @@ mod_text_coeditor_server <- function(id,
       })
 
     shiny::observeEvent(input$translate, {
-
+      
       shiny::showModal(
-        shiny::modalDialog(
-          easyClose = TRUE,
-          fade      = TRUE,
-
-          shiny::p("Select target language:"),
-
-          shiny::selectInput(
-            inputId = ns("language"),
-            label   = NULL,
-            choices = available_languages |> sort(),
-            selected = "English"),
-
-          shiny::actionButton(
-            inputId = ns("language_selected"),
-            label   = "Select language",
-            icon    = shiny::icon("check"),
-            class   = "btn-info")
+        shiny::tags$div(
+          id = ns("language_modal"), 
+          shiny::modalDialog(
+            easyClose = TRUE,
+            fade      = TRUE,
+      
+            shiny::tags$script(shiny::HTML(paste0("
+              $(document).ready(function() {
+                var modalSelector = '#", ns("language_modal"), "';
+                $(modalSelector).on('shown.bs.modal', function() {
+                  $(modalSelector).on('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                      Shiny.setInputValue('", ns("language_selected"), "', true, {priority: 'event'});
+                    }
+                  });
+                });
+      
+                $(modalSelector).on('hidden.bs.modal', function() {
+                  $(modalSelector).off('keyup');
+                });
+      
+                setTimeout(function() {
+                  $('.selectize-input input').focus();
+                }, 100);
+              });
+            "))),
+      
+            shiny::p("Select target language:"),
+      
+            shiny::selectInput(
+              inputId = ns("language"),
+              label   = NULL,
+              choices = available_languages |> sort(),
+              selected = getOption("coeditorai.target_language", "English")
+            ),
+      
+            shiny::actionButton(
+              inputId = ns("language_selected"),
+              label   = "Select language",
+              icon    = shiny::icon("check"),
+              class   = "btn-info"
+            )
+          )
         )
       )
+      
     })
 
     shiny::observeEvent(input$use_custom_prompt, {
 
+      value <- 
+        getOption(
+          "coeditorai.custom_prompt",         
+          "Summarize the text in one sentence."
+        )
+
       shiny::showModal(
-        shiny::modalDialog(
-          easyClose = TRUE,
-          fade      = TRUE,
-
-          shiny::p("Write your own custom prompt for AI to edit the text:"),
-
-          shiny::textInput(
-            inputId = ns("custom_prompt"),
-            placeholder = "Make the text more formal.",
-            label   = NULL
-          ),
-
-          shiny::actionButton(
-            inputId = ns("custom_prompt_provided"),
-            label   = "Submit prompt",
-            icon    = shiny::icon("check"),
-            class   = "btn-info")
+        shiny::tags$div(
+          id = ns("custom_prompt_modal"),  
+          shiny::modalDialog(
+            easyClose = TRUE,
+            fade      = TRUE,
+      
+            shiny::tags$script(shiny::HTML(paste0("
+              $(document).ready(function() {
+                var modalSelector = '#", ns("custom_prompt_modal"), "';
+                $(modalSelector).on('shown.bs.modal', function() {
+                  $(modalSelector).on('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                      Shiny.setInputValue('", ns("custom_prompt_provided"), "', true, {priority: 'event'});
+                    }
+                  });
+                });
+      
+                $(modalSelector).on('hidden.bs.modal', function() {
+                  $(modalSelector).off('keyup');
+                });
+      
+                setTimeout(function() {
+                  $('#", ns("custom_prompt"), "').focus();
+                }, 100);
+              });
+            "))),
+      
+            shiny::p("Write your own custom prompt for AI to edit the text:"),
+      
+            shiny::textAreaInput(
+              inputId     = ns("custom_prompt"),
+              value       = value,
+              label       = NULL,
+              width       = "100%",
+              height      = "100%",
+              resize      = "vertical"
+            ),
+      
+            shiny::actionButton(
+              inputId = ns("custom_prompt_provided"),
+              label   = "Submit prompt",
+              icon    = shiny::icon("check"),
+              class   = "btn-info"
+            )
+          )
         )
       )
     })

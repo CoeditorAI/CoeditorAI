@@ -1,7 +1,7 @@
 Package: CoeditorAI
 Type: Package
 Title: Write Analytical Texts Faster that Read Better
-Version: 1.0.0
+Version: 1.1.0
 Description: 'CoeditorAI' is a plugin that provides 
     Artificial Intelligence (AI) / Large Language Models (LLM) support, 
     allowing you to write and edit professional content faster 
@@ -21,11 +21,12 @@ LazyData: true
 Suggests: 
     httptest2,
     shinytest2,
+    spelling,
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Imports: 
     bsicons,
     bslib (>= 0.5),
@@ -46,3 +47,4 @@ Depends:
     R (>= 2.10)
 URL: https://coeditorai.com
 BugReports: https://github.com/CoeditorAI/CoeditorAI-RStudio/issues
+Language: en-US
