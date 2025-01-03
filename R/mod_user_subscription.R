@@ -22,9 +22,9 @@ mod_user_subscription_server <- function(input, output, session,
     current_user <- current_user()
     shiny::req(current_user$is_authorized)
 
-    subscription_plan <- ifelse("freemium-user" %in% current_user$roles,
-                                "freemium-user",
-                                current_user$roles)
+    subscription_plan <- ifelse("premium-user" %in% current_user$roles,
+                                "premium-user",
+                                "freemium-user")
 
     is_subscription_active <- current_user$is_valid
 
@@ -59,7 +59,15 @@ mod_user_subscription_server <- function(input, output, session,
               if (current_user$is_valid) {
                 shiny::span(
                   bsicons::bs_icon("check2-circle"),
-                  "Your freemium plan is active."
+                  "Your ", subscription_plan, " plan is active.",
+                  shiny::br(),
+                  shiny::br(),
+                  if (subscription_plan == "freemium-user") {
+                    paste0(
+                      "You've used ", current_user$user_requests, " requests to the Coeditor API today. ",
+                      "The current daily freemium limit is ", current_user$freemium_limit, " requests. "
+                    )
+                    }
                 )
               } else {
                 shiny::span(
