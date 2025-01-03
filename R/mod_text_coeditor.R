@@ -172,10 +172,10 @@ mod_text_coeditor_server <- function(id,
 
       output_text <- get_output_text(
         custom_prompt,
-        text            = input_text,
+        text          = input_text,
         custom_prompt = shiny::isolate(input$custom_prompt),
-        temperature     = shiny::isolate(temperature()),
-        session_id  = shiny::isolate(session_id()))
+        temperature   = shiny::isolate(temperature()),
+        session_id    = shiny::isolate(session_id()))
 
       if (!is.null(output_text)) output_text(output_text)
     })
@@ -243,15 +243,11 @@ mod_text_coeditor_server <- function(id,
 
     shiny::observeEvent(input$use_custom_prompt, {
 
-      custom_prompt <- getOption("coeditorai.custom_prompt", NULL)
-
-      if (!is.null(custom_prompt)) {
-        value <- custom_prompt
-        placeholder <- NULL
-      } else {
-        value <- ""
-        placeholder <- "Make the text more formal."
-      }
+      value <- 
+        getOption(
+          "coeditorai.custom_prompt",         
+          "Summarize the text in one sentence."
+        )
 
       shiny::showModal(
         shiny::tags$div(
@@ -284,13 +280,12 @@ mod_text_coeditor_server <- function(id,
             shiny::p("Write your own custom prompt for AI to edit the text:"),
       
             shiny::textAreaInput(
-              inputId = ns("custom_prompt"),
-              value = value,
-              placeholder = placeholder,
-              label   = NULL,
-              width = "100%",
-              height = "100%",
-              resize = "vertical"
+              inputId     = ns("custom_prompt"),
+              value       = value,
+              label       = NULL,
+              width       = "100%",
+              height      = "100%",
+              resize      = "vertical"
             ),
       
             shiny::actionButton(
